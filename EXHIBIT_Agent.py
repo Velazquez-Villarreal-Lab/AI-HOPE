@@ -98,16 +98,13 @@ class DS_Agent:
         with open(arg_fname, 'rb') as f:
             loaded_dict = pickle.load(f)
         self.arg_dict = loaded_dict
-        print(self.arg_dict)
         # in_context = int(self.arg_dict["selected_num"])  # Replace with your actual value
         # out_of_context = int(self.arg_dict["total_num"]) - int(self.arg_dict["selected_num"])  # Replace with your actual value
         attr = self.arg_dict['Attr_ID']
         self.metadata_df = pd.read_csv(self.arg_dict["metafname"], sep="\t", index_col=0,  header=0 ,na_values=["none", ""])
 
         self.metadata_df = self.metadata_df.apply(lambda col: col.astype('string') if col.dtype == 'object' else col)
-        print(pd.api.types.is_numeric_dtype(self.metadata_df[attr]))
         if pd.api.types.is_numeric_dtype(self.metadata_df[attr]) and self.metadata_df[attr].nunique() > 2:
-            print("numeric")
             plt.figure(figsize=(4, 3))
             sns.histplot(self.metadata_df [attr], kde=True)
             plt.xlabel('Value')
@@ -119,19 +116,14 @@ class DS_Agent:
             value_counts = self.metadata_df[attr].value_counts()
             value_counts.index = value_counts.index.astype(str)
             self.max_ylabel = max(len(s) for s in value_counts.index.to_list() )
-            print(value_counts)
-            print(value_counts.shape[0])
-            print("@@")
-            print(self.max_ylabel )
+            
             self.n_num = value_counts.shape[0]
-            print( self.n_num)
             self.n_num
 
             if self.max_ylabel >10 :
                 self.y_label_dict = dict(zip( ["X"+str(i) for i in range(0,value_counts.shape[0])] , value_counts.index.to_list()))
                 value_counts.index = ["X"+str(i) for i in range(0,value_counts.shape[0])]
                 
-            print(self.y_label_dict )
             value_percentages = (value_counts / len(self.metadata_df[attr])) * 100
             plt.figure(figsize=(5, 3+ 0.5*self.n_num))
             plt.subplot(2, 1, 1)  # 1 row, 2 columns, first subplot

@@ -1,4 +1,4 @@
-In our study of colon cancer patient samples, we assessed several key attributes, including SUBTYPE, AGE, SEX, ETHNICITY, RACE, and TUMOR_STAGE.
+In our study of Lung Squamous Cell Carcinoma (LUSC) patient samples, we assessed several key attributes, including SUBTYPE, AGE, SEX, ETHNICITY, RACE, and TUMOR_STAGE.
 
 TMB_status is the tumor mutational burden (TMB) status analyzed specifically for nonsynonymous mutations per million bases (Mb), referred to as TMB_NONSYNONYMOUS.
 However, there is currently no consensus in the definition of TMB cutoffs for patient stratification. Here, we follow that the recent tissue-agnostic US FDA approval of pembrolizumab defined elevated TMB as being ≥10 mutations/Mb for TMB_status.

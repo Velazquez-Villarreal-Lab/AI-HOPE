@@ -1,0 +1,4 @@
+Name	Description
+TCGA_COAD	Colorectal Adenocarcinoma TCGA PanCancer data.
+TCGA_LUSC	Lung Squamous Cell Carcinoma TCGA PanCancer data.
+TCGA_BRCA	Breast Invasive Carcinoma TCGA PanCancer data.

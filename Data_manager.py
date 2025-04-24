@@ -265,7 +265,7 @@ class Data_manager:
 
         self.delete_ID = ""
 
-        self.html_fname = "dialogs/dm.html"
+        self.html_fname = os.path.normpath("dialogs/dm.html" )
 
 
     
@@ -320,7 +320,7 @@ class Data_manager:
         print("__chk_yn_fun")
         messages = state['messages'][-1].content
 
-        with open("dialogs/_yn.pkl", "rb") as f:
+        with open(os.path.normpath("dialogs/_yn.pkl" ), "rb") as f:
             loaded_chat_prompt = pickle.load(f)
 
         chain = loaded_chat_prompt| self.model  
@@ -374,7 +374,7 @@ class Data_manager:
 
     def initQ_fun(self, state: AgentState):
 
-        with open('dialogs/_dm_init.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_dm_init.pkl' ), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -387,7 +387,7 @@ class Data_manager:
        
         messages = state['messages'][-1].content
         
-        with open("dialogs/_dm_initQ.pkl", "rb") as f:
+        with open(os.path.normpath("dialogs/_dm_initQ.pkl"), "rb") as f:
             loaded_chat_prompt = pickle.load(f)
 
         chain = loaded_chat_prompt | self.model
@@ -429,7 +429,7 @@ class Data_manager:
     
     def init_create_fun(self, state: AgentState):
 
-        with open('dialogs/_dm_init_create.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_dm_init_create.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -689,12 +689,12 @@ class Data_manager:
         try:
             # Try to read the file
             
-            df = pd.read_csv("data/dataset.tsv", sep='\t', header=0 , na_values=missing_values)
+            df = pd.read_csv(os.path.normpath("data/dataset.tsv"), sep='\t', header=0 , na_values=missing_values)
             new_row = pd.DataFrame({'Name': [self.DataID], 'Description': [self.DataDS]})
 
             # Append the new row using concat
             df = pd.concat([df, new_row], ignore_index=True)
-            df.to_csv('data/dataset.tsv', sep='\t', index=False)
+            df.to_csv(os.path.normpath('data/dataset.tsv'), sep='\t', index=False)
             self.tk_print("[AI] update the index file as follows.")   
             self.tk_print(df.to_string())
         except Exception as e:
@@ -704,13 +704,13 @@ class Data_manager:
         
 
         try:
-            os.mkdir("data/"+self.DataID)
+            os.mkdir(os.path.normpath("data/"+self.DataID) )
 
         except Exception as e:
             self.tk_print(f"[AI]***WARNING***  Failed to create the data folder: {e}")
 
         try:
-            output_file = "data/"+self.DataID+"/README.txt" 
+            output_file = os.path.normpath("data/"+self.DataID+"/README.txt" )
             with open(output_file , 'w') as f:
                 f.write(self.DataREADME)
             self.tk_print(f"String successfully written to {output_file}.")
@@ -725,7 +725,7 @@ class Data_manager:
                 "PFS_TIME": self.PFS_Time ,
                 "PFS_STATUS": self.PFS_Events
             }
-            output_file = "data/"+self.DataID+"/INDEX.tsv"
+            output_file = os.path.normpath("data/"+self.DataID+"/INDEX.tsv")
             # Convert the dictionary to a DataFrame
             df = pd.DataFrame(list(data_dict.items()), columns=["key", "value"])
         
@@ -775,7 +775,7 @@ class Data_manager:
                 self.tk_print(f"Skipping column {col} due to error: {e}")
 
 
-        output_file = "data/"+self.DataID+"/pt_metadata.tsv"
+        output_file = os.path.normpath("data/"+self.DataID+"/pt_metadata.tsv")
         df.to_csv(output_file, sep='\t', index=True, na_rep="none")
         
 
@@ -784,7 +784,7 @@ class Data_manager:
         
         
         self.tk_print("The following datasets have been successfully installed in your computer:\n")
-        df = pd.read_csv('data/dataset.tsv', sep='\t' ,na_values=["none", ""])
+        df = pd.read_csv(os.path.normpath('data/dataset.tsv' ), sep='\t' ,na_values=["none", ""])
         first_col_width = 30
         second_col_width = 50
         df['Name'] = df['Name'].str.slice(0, first_col_width)
@@ -956,7 +956,7 @@ def main():
 
     abot = Data_manager( llm, memory_p1  )
     
-    abot.start(thread_p1, "1" , "conversation/test/")
+    abot.start(thread_p1, "1" , os.path.normpath("conversations/test/"))
         
     while True :
         conversation_content =abot.pop_messages()

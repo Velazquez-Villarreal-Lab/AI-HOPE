@@ -37,7 +37,7 @@ class AI_DM:
     def __init__(self, root):
         self.root = root
         self.user_input = tk.StringVar()
-        self.html_fname = "dialogs/dm.html"
+        self.html_fname = os.path.normpath("dialogs/dm.html" )
         
         self.root.protocol("WM_DELETE_WINDOW",  self.on_close)
         self.conversation_path = ""
@@ -129,9 +129,9 @@ class AI_DM:
         user_input = ""
         current_directory = os.getcwd()
         current_time = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        os.makedirs(current_directory+"/conversations/"+current_time)
+        os.makedirs(os.path.normpath(current_directory+"/conversations/"+current_time) )
 
-        self.conversation_path = current_directory+"/conversations/"+current_time
+        self.conversation_path = os.path.normpath(current_directory+"/conversations/"+current_time)
         user_input = ""
         ### init llm agent
         # Define the LLM

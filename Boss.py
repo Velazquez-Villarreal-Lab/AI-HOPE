@@ -506,6 +506,7 @@ class Boss:
             interrupt_before=["init_Qtypechk_1", "pred_twoGroups", "pred_lookup",  "switch_twoGroups","switch_lookup", "input_data_lookup" , "decide_subset_lookup","show_attr_values_lookup", "summary_data_lookup",   "parse_query_I_lookup" , "set_criteria_lookup", "chk_surv_lookup" , "chk_data_lookup", "parse_VOI_lookup", "parse_wRL_lookup", "parse_woRL_lookup",  "parse_surv_wRL_lookup", "parse_surv_woRL_lookup", "parse_CL_lookup", "parse_surv_CL_lookup", "input_data_Case" ,"show_attr_values_Case", "summary_data_Case",  "parse_query_I_Case" , "set_criteria_Case", "input_data_Ctrl" , "summary_data_Ctrl", "parse_query_I_Ctrl" , "show_attr_values_Ctrl","set_criteria_Ctrl","finalize_data", "chk_surv" , "chk_data" , "chk_compare",  "parse_Survival", "multiple_Survival" , "parse_OR", "parse_CL", "parse_end"]
         )
         
+        self.conversation_path = ""
         self.model = model
         self.conversation_buffer =[]
         self.main_Q= ""
@@ -543,7 +544,7 @@ class Boss:
         self.CL_num=1
 
         # self.user_input = tk.StringVar()
-        self.html_fname = "dialogs/welcome.html"
+        self.html_fname = os.path.normpath("dialogs/welcome.html")
 
 
     
@@ -886,9 +887,9 @@ class Boss:
         self.Ctrl_metafname=""
         self.Ctrl_metadata_df = ""
 
-        self.html_fname = "dialogs/welcome.html"
+        self.html_fname = os.path.normpath("dialogs/welcome.html")
 
-        with open('dialogs/_welcome.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_welcome.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -902,7 +903,7 @@ class Boss:
         messages = state['messages'][-1].content
         self.main_Q = messages
         
-        with open("dialogs/_qtype_1.pkl", "rb") as f:
+        with open(os.path.normpath("dialogs/_qtype_1.pkl"), "rb") as f:
             loaded_chat_prompt = pickle.load(f)
 
         chain = loaded_chat_prompt| self.model
@@ -950,7 +951,7 @@ class Boss:
     
     def init_Qtypechk_2_fun(self, state: AgentState):
         
-        with open("dialogs/_qtype_2.pkl", "rb") as f:
+        with open(os.path.normpath("dialogs/_qtype_2.pkl"), "rb") as f:
             loaded_chat_prompt = pickle.load(f)
 
         chain = loaded_chat_prompt| self.model  
@@ -991,7 +992,7 @@ class Boss:
         print("__chk_yn_fun")
         messages = state['messages'][-1].content
 
-        with open("dialogs/_yn.pkl", "rb") as f:
+        with open(os.path.normpath("dialogs/_yn.pkl" ), "rb") as f:
             loaded_chat_prompt = pickle.load(f)
 
         chain = loaded_chat_prompt| self.model  
@@ -1044,7 +1045,7 @@ class Boss:
     
     
     def init_pred_twoGroups_fun(self, state: AgentState):
-        with open('dialogs/_init_pred_twoG.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_pred_twoG.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1053,7 +1054,7 @@ class Boss:
         self.tk_print(str)  
 
     def init_switch_twoGroups_fun(self, state: AgentState):
-        with open('dialogs/_init_switch_twoG.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_switch_twoG.pkl') , 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1063,7 +1064,7 @@ class Boss:
 
     def init_pred_lookup_fun(self, state: AgentState):
         
-        with open('dialogs/_init_pred_lookup.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_pred_lookup.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1073,7 +1074,7 @@ class Boss:
 
     def init_switch_lookup_fun(self, state: AgentState):
 
-        with open('dialogs/_init_switch_lookup.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_switch_lookup.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1083,7 +1084,7 @@ class Boss:
 
     def init_decide_subset_lookup_fun(self, state: AgentState):   
         
-        with open('dialogs/_init_decide_subset_lookup.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_decide_subset_lookup.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1093,7 +1094,7 @@ class Boss:
 
     def init_lookup_fun(self, state: AgentState):
         
-        with open('dialogs/_init_lookup.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_lookup.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1102,7 +1103,7 @@ class Boss:
         self.tk_print(str)
 
         self.tk_print("The following datasets have been successfully installed in your computer:\n")
-        df = pd.read_csv('data/dataset.tsv', sep='\t' ,na_values=["none", ""])
+        df = pd.read_csv(os.path.normpath('data/dataset.tsv'), sep='\t' ,na_values=["none", ""])
         first_col_width = 30
         second_col_width = 50
         df['Name'] = df['Name'].str.slice(0, first_col_width)
@@ -1122,7 +1123,7 @@ class Boss:
         self.tk_print(str)
 
     def init_VOI_lookup_fun(self, state: AgentState):
-        with open('dialogs/_init_VOI_lookup.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_VOI_lookup.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1149,8 +1150,8 @@ class Boss:
         return {'messages': [messages]}
 
     def init_Case_fun(self, state: AgentState):
-        self.html_fname = "dialogs/cc.html"
-        with open('dialogs/init_case.pkl', 'rb') as f:
+        self.html_fname = os.path.normpath("dialogs/cc.html")
+        with open(os.path.normpath('dialogs/init_case.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1158,7 +1159,7 @@ class Boss:
         str = loaded_dict["message"]
         self.tk_print(str)
 
-        with open('dialogs/init_case_1.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/init_case_1.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1167,7 +1168,7 @@ class Boss:
         self.tk_print(str)
 
         self.tk_print("The following datasets have been successfully installed in your computer:\n")
-        df = pd.read_csv('data/dataset.tsv', sep='\t' ,na_values=["none", ""])
+        df = pd.read_csv(os.path.normpath('data/dataset.tsv'), sep='\t' ,na_values=["none", ""])
         first_col_width = 30
         second_col_width = 50
         df['Name'] = df['Name'].str.slice(0, first_col_width)
@@ -1208,7 +1209,7 @@ class Boss:
         return {'messages': [messages]}
      
     def load_data_Case_fun(self, state: AgentState):
-        index_fname = "data/{}/INDEX.tsv".format(self.Case_data_id )
+        index_fname = os.path.normpath("data/{}/INDEX.tsv".format(self.Case_data_id ) )
         df = pd.read_csv(index_fname, sep="\t", index_col=0,  header=0 ,na_values=["none", ""])
 
         config_dict = {}
@@ -1216,7 +1217,7 @@ class Boss:
         for key in df.index:
             config_dict[key] = df.loc[ key, "value" ] 
         
-        metadata_fname = "data/{}/{}".format(self.Case_data_id,config_dict["DATAFNAME"] )
+        metadata_fname = os.path.normpath("data/{}/{}".format(self.Case_data_id,config_dict["DATAFNAME"] ) )
         self.Case_metafname = metadata_fname
         df = pd.read_csv(metadata_fname, sep="\t", index_col=0,  header=0 ,na_values=["none", ""])
         self.Case_config_dict = config_dict
@@ -1229,7 +1230,7 @@ class Boss:
 
         str ="\n=======================================================\n"+ "Introduction to the Dataset" +"\n=======================================================\n"
         self.tk_print(str)
-        index_fname = "data/{}/{}".format(self.Case_data_id, self.Case_config_dict["README"])
+        index_fname = os.path.normpath( "data/{}/{}".format(self.Case_data_id, self.Case_config_dict["README"]) )
         with open(index_fname, "r") as f:
             file_content = f.read()
         f.close()
@@ -1248,7 +1249,7 @@ class Boss:
 
     
     def init_set_criteria_fun(self, state: AgentState):
-        with open('dialogs/set_up_criteria.pkl', 'rb') as f:
+        with open(os.path.normpath( 'dialogs/set_up_criteria.pkl') , 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1293,7 +1294,7 @@ class Boss:
             #####
             # input_string = self.extract_relationship_prompt(condition)
 
-            with open("dialogs/_relationship.pkl", "rb") as f:
+            with open(os.path.normpath("dialogs/_relationship.pkl"), "rb") as f:
                 loaded_chat_prompt = pickle.load(f)
 
             chain = loaded_chat_prompt| self.model  
@@ -1346,7 +1347,7 @@ class Boss:
         sample_list = self.evaluate_postfix(postorder_list, sample_dict )
         
         self.Case_sample_ids = sample_list
-        out_html_fname = self.conversation_path+"/case_sample_selection.html"
+        out_html_fname = os.path.normpath(self.conversation_path+"/case_sample_selection.html")
         self.Case_criteria_str = new_expression
         self.Case_criteria_logic = condition_map
         msg_dict ={
@@ -1356,17 +1357,16 @@ class Boss:
         "criteria_logic":self.Case_criteria_logic ,
         "selected_num":len(self.Case_sample_ids),
         "output_path":self.conversation_path,
-        "output_png":self.conversation_path+"/case_sample_selection_"+str(self.case_DS_num)+".png",
-        "output_html":self.conversation_path+"/case_sample_selection_"+str(self.case_DS_num)+".html",
-        "output_pdf":self.conversation_path+"/case_sample_selection_"+str(self.case_DS_num)+".pdf"
+        "output_png":os.path.normpath(self.conversation_path+"/case_sample_selection_"+str(self.case_DS_num)+".png" ),
+        "output_html":os.path.normpath( self.conversation_path+"/case_sample_selection_"+str(self.case_DS_num)+".html" )
         }
 
-        with open( self.conversation_path+'/case_sample_selection+'+str(self.case_DS_num)+'.pkl', 'wb') as f:
+        with open( os.path.normpath(self.conversation_path+'/case_sample_selection+'+str(self.case_DS_num)+'.pkl' ), 'wb') as f:
             pickle.dump(msg_dict, f)
         f.close()
         
         time.sleep(1)
-        if self.run_script( "DS_Agent.py",self.conversation_path+'/case_sample_selection+'+str(self.case_DS_num)+'.pkl' ):
+        if self.run_script( "DS_Agent.py",os.path.normpath(self.conversation_path+'/case_sample_selection+'+str(self.case_DS_num)+'.pkl' ) ):
             self.html_fname = msg_dict["output_html"]
             self.tk_print(f"[AI] Congratulations! You have successfully set up the criteria to refine the samples. You can now proceed to the next step.\n" )
             self.case_DS_num = self.case_DS_num+1
@@ -1393,17 +1393,16 @@ class Boss:
             "metafname":self.Case_metafname,    
             "Attr_ID":data_attr,
             "output_path":self.conversation_path,
-            "output_png":self.conversation_path+"/Case_EXHIBIT_"+str(self.case_exhibit_num) +".png",
-            "output_html":self.conversation_path+"/Case_EXHIBIT_"+str(self.case_exhibit_num) +".html",
-            "output_pdf":self.conversation_path+"/Case_EXHIBIT_"+str(self.case_exhibit_num) +".pdf"
+            "output_png":os.path.normpath(self.conversation_path+"/Case_EXHIBIT_"+str(self.case_exhibit_num) +".png" ),
+            "output_html":os.path.normpath(self.conversation_path+"/Case_EXHIBIT_"+str(self.case_exhibit_num) +".html" )
             }
         
-            with open( self.conversation_path+"/Case_EXHIBIT_"+str(self.case_exhibit_num) +".pkl", 'wb') as f:
+            with open( os.path.normpath(self.conversation_path+"/Case_EXHIBIT_"+str(self.case_exhibit_num) +".pkl" ), 'wb') as f:
                 pickle.dump(msg_dict, f)
             f.close()
             time.sleep(1)
-            if self.run_script( "EXHIBIT_Agent.py",self.conversation_path+"/Case_EXHIBIT_"+str(self.case_exhibit_num) +".pkl" ):
-                self.html_fname = self.conversation_path+"/Case_EXHIBIT_"+str(self.case_exhibit_num) +".html"
+            if self.run_script( "EXHIBIT_Agent.py",os.path.normpath(self.conversation_path+"/Case_EXHIBIT_"+str(self.case_exhibit_num) +".pkl" ) ):
+                self.html_fname = os.path.normpath(self.conversation_path+"/Case_EXHIBIT_"+str(self.case_exhibit_num) +".html" )
                 self.case_exhibit_num = self.case_exhibit_num+1
             else:
                 
@@ -1412,7 +1411,7 @@ class Boss:
             self.tk_print("\n[AI]***WARNING*** Your input is invalid. Please try again.\n")
 
     def summary_Case_fun(self, state: AgentState): 
-        self.html_fname = "dialogs/cc_2.html"
+        self.html_fname = os.path.normpath("dialogs/cc_2.html" )
         if len(self.Case_criteria_logic) ==0:
             self.Case_sample_ids = self.Case_metadata_df.index.to_list()
             str =f"[AI] You have not defined any criteria to filter samples for the case cohort. All {len(self.Case_sample_ids)} samples in the dataset will be included."
@@ -1423,7 +1422,7 @@ class Boss:
             self.tk_print(str)
 
     def init_Ctrl_fun(self, state: AgentState):
-        with open('dialogs/init_ctrl_1.pkl', 'rb') as f:
+        with open(os.path.normpath( 'dialogs/init_ctrl_1.pkl' ) , 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1434,7 +1433,7 @@ class Boss:
         
         
         self.tk_print("The following datasets have been successfully installed in your computer:\n")
-        df = pd.read_csv('data/dataset.tsv', sep='\t' ,na_values=["none", ""])
+        df = pd.read_csv(os.path.normpath('data/dataset.tsv'), sep='\t' ,na_values=["none", ""])
         first_col_width = 30
         second_col_width = 50
         df['Name'] = df['Name'].str.slice(0, first_col_width)
@@ -1457,7 +1456,7 @@ class Boss:
    
     def init_query_I_Case_fun(self, state: AgentState):
 
-        with open('dialogs/parse_query_I.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/parse_query_I.pkl' ), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="\n=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1480,7 +1479,7 @@ class Boss:
 
     def init_query_I_Ctrl_fun(self, state: AgentState):
 
-        with open('dialogs/parse_query_I.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/parse_query_I.pkl' ), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="\n=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1505,7 +1504,7 @@ class Boss:
         
         messages = state['messages'][-1].content
         
-        with open("dialogs/_query_I.pkl", "rb") as f:
+        with open(os.path.normpath("dialogs/_query_I.pkl" ), "rb") as f:
             loaded_chat_prompt = pickle.load(f)
 
         chain = loaded_chat_prompt| self.model  
@@ -1573,14 +1572,14 @@ class Boss:
         return {'messages': [messages]}
 
     def load_data_Ctrl_fun(self, state: AgentState):
-        index_fname = "data/{}/INDEX.tsv".format(self.Ctrl_data_id )
+        index_fname = os.path.normpath("data/{}/INDEX.tsv".format(self.Ctrl_data_id ) )
         df = pd.read_csv(index_fname, sep="\t", index_col=0,  header=0 ,na_values=["none", ""])
 
         config_dict = {}
         
         for key in df.index:
             config_dict[key] = df.loc[ key,  "value"  ]  
-        metadata_fname = "data/{}/{}".format(self.Case_data_id,config_dict["DATAFNAME"] )
+        metadata_fname = os.path.normpath("data/{}/{}".format(self.Case_data_id,config_dict["DATAFNAME"] ) )
         self.Ctrl_metafname = metadata_fname
         df = pd.read_csv(metadata_fname, sep="\t", index_col=0,  header=0 ,na_values=["none", ""])
     
@@ -1590,7 +1589,7 @@ class Boss:
         rows, columns = self.Ctrl_metadata_df.shape
         str ="\n=======================================================\n"+ "Introduction to the Dataset" +"\n=======================================================\n"
         self.tk_print(str)
-        index_fname = "data/{}/{}".format(self.Ctrl_data_id, self.Ctrl_config_dict["README"])
+        index_fname = os.path.normpath( "data/{}/{}".format(self.Ctrl_data_id, self.Ctrl_config_dict["README"]) )
         with open(index_fname, "r") as f:
             file_content = f.read()
         f.close()
@@ -1641,7 +1640,7 @@ class Boss:
 
             self.tk_print(f'[AI] I am reasoning what {condition} means')
             #####
-            with open("dialogs/_relationship.pkl", "rb") as f:
+            with open(os.path.normpath( "dialogs/_relationship.pkl" ), "rb") as f:
                 loaded_chat_prompt = pickle.load(f)
 
             chain = loaded_chat_prompt| self.model  
@@ -1698,7 +1697,7 @@ class Boss:
         sample_list = self.evaluate_postfix(postorder_list, sample_dict )
         
         self.Ctrl_sample_ids = sample_list
-        out_html_fname = self.conversation_path+"/ctrl_sample_selection.html"
+        out_html_fname = os.path.normpath( self.conversation_path+"/ctrl_sample_selection.html" )
         self.Ctrl_criteria_str = new_expression
         self.Ctrl_criteria_logic = condition_map
         msg_dict ={
@@ -1708,18 +1707,17 @@ class Boss:
         "criteria_logic":self.Ctrl_criteria_logic ,
         "selected_num":len(self.Ctrl_sample_ids),
         "output_path":self.conversation_path,
-        "output_png":self.conversation_path+"/ctrl_sample_selection_"+str(self.ctrl_DS_num)+".png",
-        "output_html":self.conversation_path+"/ctrl_sample_selection_"+str(self.ctrl_DS_num)+".html",
-        "output_pdf":self.conversation_path+"/ctrl_sample_selection_"+str(self.ctrl_DS_num)+".pdf"
+        "output_png":os.path.normpath( self.conversation_path+"/ctrl_sample_selection_"+str(self.ctrl_DS_num)+".png" ),
+        "output_html":os.path.normpath( self.conversation_path+"/ctrl_sample_selection_"+str(self.ctrl_DS_num)+".html" )
         }
 
-        with open( self.conversation_path+'/ctrl_sample_selection+'+str(self.ctrl_DS_num)+'.pkl', 'wb') as f:
+        with open( os.path.normpath(self.conversation_path+'/ctrl_sample_selection+'+str(self.ctrl_DS_num)+'.pkl') , 'wb') as f:
             pickle.dump(msg_dict, f)
         f.close()
 
       
         time.sleep(1)
-        if self.run_script( "DS_Agent.py",self.conversation_path+'/ctrl_sample_selection+'+str(self.ctrl_DS_num)+'.pkl' ):
+        if self.run_script( "DS_Agent.py",os.path.normpath(self.conversation_path+'/ctrl_sample_selection+'+str(self.ctrl_DS_num)+'.pkl' ) ):
             self.html_fname = msg_dict["output_html"]
             self.ctrl_DS_num = self.ctrl_DS_num+1
             self.tk_print(f"[AI] Congratulations! You have successfully set up the criteria to refine the control samples. You can now proceed to the next step.\n" )
@@ -1744,17 +1742,16 @@ class Boss:
             "metafname":self.Ctrl_metafname,    
             "Attr_ID":data_attr,
             "output_path":self.conversation_path,
-            "output_png":self.conversation_path+"/Ctrl_EXHIBIT_"+str(self.ctrl_exhibit_num) +".png",
-            "output_html":self.conversation_path+"/Ctrl_EXHIBIT_"+str(self.ctrl_exhibit_num) +".html",
-            "output_pdf":self.conversation_path+"/Ctrl_EXHIBIT_"+str(self.ctrl_exhibit_num) +".pdf"
+            "output_png":os.path.normpath(self.conversation_path+"/Ctrl_EXHIBIT_"+str(self.ctrl_exhibit_num) +".png" ),
+            "output_html":os.path.normpath(self.conversation_path+"/Ctrl_EXHIBIT_"+str(self.ctrl_exhibit_num) +".html")
             }
         
-            with open( self.conversation_path+"/Ctrl_EXHIBIT_"+str(self.ctrl_exhibit_num) +".pkl", 'wb') as f:
+            with open( os.path.normpath(self.conversation_path+"/Ctrl_EXHIBIT_"+str(self.ctrl_exhibit_num) +".pkl" ), 'wb') as f:
                 pickle.dump(msg_dict, f)
             f.close()
             time.sleep(1)
-            if self.run_script( "EXHIBIT_Agent.py",self.conversation_path+"/Ctrl_EXHIBIT_"+str(self.ctrl_exhibit_num) +".pkl" ):
-                self.html_fname = self.conversation_path+"/Ctrl_EXHIBIT_"+str(self.ctrl_exhibit_num) +".html"
+            if self.run_script( "EXHIBIT_Agent.py",os.path.normpath(self.conversation_path+"/Ctrl_EXHIBIT_"+str(self.ctrl_exhibit_num) +".pkl" ) ):
+                self.html_fname = os.path.normpath(self.conversation_path+"/Ctrl_EXHIBIT_"+str(self.ctrl_exhibit_num) +".html")
                 self.ctrl_exhibit_num = self.ctrl_exhibit_num+1
             else:
                 self.tk_print("[AI] *** Warning *** An error occurred while running the data analysis agents.")
@@ -1763,7 +1760,7 @@ class Boss:
 
     
     def summary_Ctrl_fun(self, state: AgentState): 
-        self.html_fname = "dialogs/cc_3.html"
+        self.html_fname = os.path.normpath("dialogs/cc_3.html")
         str ="\n=======================================================\n"+ "Finalize Your Data Selection for the Case and Control Groups" +"\n=======================================================\n"
         self.tk_print(str)
 
@@ -1798,7 +1795,7 @@ class Boss:
     def init_exec_fun(self, state: AgentState):
        
         
-        with open("dialogs/_surv.pkl", "rb") as f:
+        with open(os.path.normpath("dialogs/_surv.pkl"), "rb") as f:
             loaded_chat_prompt = pickle.load(f)
 
         chain = loaded_chat_prompt| self.model  
@@ -1842,7 +1839,7 @@ class Boss:
         return {'messages': [output]}
 
     def init_OR_fun(self, state: AgentState):   
-        with open('dialogs/init_OR.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/init_OR.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1888,7 +1885,7 @@ class Boss:
             self.tk_print(f'[AI] I am reasoning what {condition} means')
             ####
             #input_string = self.extract_relationship_prompt(condition)
-            with open("dialogs/_relationship.pkl", "rb") as f:
+            with open(os.path.normpath("dialogs/_relationship.pkl"), "rb") as f:
                 loaded_chat_prompt = pickle.load(f)
 
             chain = loaded_chat_prompt| self.model  
@@ -1971,24 +1968,23 @@ class Boss:
         "criteria_str":new_expression ,
         "criteria_logic":condition_map ,
         "output_path":self.conversation_path,
-        "output_png":self.conversation_path+"/OR_test_"+str(self.or_num) +".png",
-        "output_html":self.conversation_path+"/OR_test_"+str(self.or_num) +".html",
-        "output_pdf":self.conversation_path+"/OR_test_"+str(self.or_num) +".pdf"
+        "output_png":os.path.normpath(self.conversation_path+"/OR_test_"+str(self.or_num) +".png" ),
+        "output_html":os.path.normpath(self.conversation_path+"/OR_test_"+str(self.or_num) +".html")
         }
 
-        with open( self.conversation_path+"/OR_test_"+str(self.or_num) +".pkl", 'wb') as f:
+        with open( os.path.normpath( self.conversation_path+"/OR_test_"+str(self.or_num) +".pkl" ), 'wb') as f:
             pickle.dump(msg_dict, f)
         f.close()
         time.sleep(1)
-        if self.run_script( "OR_Agent.py",self.conversation_path+"/OR_test_"+str(self.or_num) +".pkl" ):
-            self.html_fname = self.conversation_path+"/OR_test_"+str(self.or_num) +".html"
+        if self.run_script( "OR_Agent.py",os.path.normpath(self.conversation_path+"/OR_test_"+str(self.or_num) +".pkl" ) ):
+            self.html_fname = os.path.normpath(self.conversation_path+"/OR_test_"+str(self.or_num) +".html" )
             self.or_num = self.or_num+1
         else:
             self.tk_print("[AI] *** Warning *** An error occurred while running the data analysis agents.")
         return {'messages': [output]}  
     
     def init_compare_fun(self, state: AgentState):
-        with open('dialogs/_init_compare.pkl', 'rb') as f:
+        with open(os.path.normpath( 'dialogs/_init_compare.pkl' ), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -1997,7 +1993,7 @@ class Boss:
         self.tk_print(str)    
 
     def init_Survival_fun(self, state: AgentState):
-        with open('dialogs/init_Survival.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/init_Survival.pkl' ), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -2008,7 +2004,7 @@ class Boss:
       
     
     def init_multiple_Survival_fun(self, state: AgentState):
-        with open('dialogs/multi_Survival.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/multi_Survival.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -2039,12 +2035,11 @@ class Boss:
         "Ctrl_metafname":self.Ctrl_metafname,
         "Ctrl_ID":self.Ctrl_sample_ids,
         "output_path":self.conversation_path,
-        "output_OS_png":self.conversation_path+"/Surv_OS_"+str(self.surv_num) +".png",
-        "output_PFS_png":self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +".png",
-        "output_forest_OS_png":self.conversation_path+"/Surv_forest_OS_"+str(self.surv_num) +".png",
-        "output_forest_PFS_png":self.conversation_path+"/Surv_forest_PFS_"+str(self.surv_num) +".png",
-        "output_html":self.conversation_path+"/Surv_"+str(self.surv_num) +".html",
-        "output_pdf":self.conversation_path+"/Surv_"+str(self.surv_num) +".pdf"
+        "output_OS_png":os.path.normpath(self.conversation_path+"/Surv_OS_"+str(self.surv_num) +".png" ),
+        "output_PFS_png":os.path.normpath(self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +".png"),
+        "output_forest_OS_png":os.path.normpath(self.conversation_path+"/Surv_forest_OS_"+str(self.surv_num) +".png"),
+        "output_forest_PFS_png":os.path.normpath(self.conversation_path+"/Surv_forest_PFS_"+str(self.surv_num) +".png"),
+        "output_html":os.path.normpath(self.conversation_path+"/Surv_"+str(self.surv_num) +".html")
         }
         
         OS_flag =1 
@@ -2069,7 +2064,7 @@ class Boss:
             OS_flag=0
         
         if OS_flag ==1:
-            msg_dict["output_OS_png"]=self.conversation_path+"/Surv_OS_"+str(self.surv_num) +".png"
+            msg_dict["output_OS_png"]=os.path.normpath(self.conversation_path+"/Surv_OS_"+str(self.surv_num) +".png" )
             msg_dict["Case_OS_TIME"] = self.Case_config_dict["OS_TIME"] 
             msg_dict["Case_OS_STATUS"] = self.Case_config_dict["OS_STATUS"] 
             msg_dict["Ctrl_OS_TIME"] = self.Ctrl_config_dict["OS_TIME"] 
@@ -2098,7 +2093,7 @@ class Boss:
             PFS_flag=0
         
         if PFS_flag ==1:
-            msg_dict["output_PFS_png"]=self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +".png"
+            msg_dict["output_PFS_png"]=os.path.normpath(self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +".png")
             msg_dict["Case_PFS_TIME"] = self.Case_config_dict["PFS_TIME"] 
             msg_dict["Case_PFS_STATUS"] = self.Case_config_dict["PFS_STATUS"] 
             msg_dict["Ctrl_PFS_TIME"] = self.Ctrl_config_dict["PFS_TIME"] 
@@ -2109,12 +2104,12 @@ class Boss:
         msg_dict["EXTRA_ATTR"] = self.surv_extra
         
 
-        with open( self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl", 'wb') as f:
+        with open( os.path.normpath( self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl" ), 'wb') as f:
             pickle.dump(msg_dict, f)
         f.close()
         time.sleep(1)
-        if self.run_script( "SURV_Agent.py",self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl" ):
-            self.html_fname = self.conversation_path+"/Surv_"+str(self.surv_num) +".html"
+        if self.run_script( "SURV_Agent.py",os.path.normpath(self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl" ) ):
+            self.html_fname = os.path.normpath( self.conversation_path+"/Surv_"+str(self.surv_num) +".html" )
             self.surv_extra = []
             self.surv_num = self.surv_num+1
         else:
@@ -2124,7 +2119,7 @@ class Boss:
     def pred_surv_fun(self, state: AgentState):
 
 
-        with open('dialogs/_pred_surv.pkl', 'rb') as f:
+        with open(os.path.normpath( 'dialogs/_pred_surv.pkl' ), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -2134,7 +2129,7 @@ class Boss:
         self.tk_print(str)  
 
     def pred_data_fun(self, state: AgentState):
-        with open('dialogs/_pred_data.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_pred_data.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -2144,7 +2139,7 @@ class Boss:
         self.tk_print(str)  
     
     def init_wRL_fun(self, state: AgentState):
-        with open('dialogs/_init_wRL.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_wRL.pkl' ), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -2153,7 +2148,7 @@ class Boss:
         self.tk_print(str)  
 
     def init_woRL_fun(self, state: AgentState):
-        with open('dialogs/_init_woRL.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_woRL.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -2163,7 +2158,7 @@ class Boss:
 
     def init_RL_fun(self, state: AgentState):
 
-        with open("dialogs/_relation_chk.pkl", "rb") as f:
+        with open(os.path.normpath("dialogs/_relation_chk.pkl"), "rb") as f:
             loaded_chat_prompt = pickle.load(f)
 
         chain = loaded_chat_prompt| self.model
@@ -2197,7 +2192,7 @@ class Boss:
         return {'messages': [output]}
 
     def init_CL_fun(self, state: AgentState):
-        with open('dialogs/_init_CL.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_CL.pkl' ), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -2207,7 +2202,7 @@ class Boss:
     
     def init_end_fun(self, state: AgentState):
         
-        with open('dialogs/_init_END.pkl', 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_END.pkl'), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
@@ -2222,7 +2217,7 @@ class Boss:
     def parse_CL_fun(self, state: AgentState):
         messages = state['messages'][-1].content
         
-        with open("dialogs/_all.pkl", "rb") as f:
+        with open(os.path.normpath("dialogs/_all.pkl"), "rb") as f:
             loaded_chat_prompt = pickle.load(f)
 
         chain = loaded_chat_prompt| self.model  
@@ -2282,15 +2277,15 @@ class Boss:
         "Ctrl_criteria_logic":self.Ctrl_criteria_logic,
         "associated_attr":self.associated_attr ,
         "output_path":self.conversation_path,
-        "output_png":self.conversation_path+"/CL_"+str(self.CL_num) +".png",
-        "output_html":self.conversation_path+"/CL_"+str(self.CL_num) +".html"
+        "output_png":os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".png"),
+        "output_html":os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".html")
         }
-        with open( self.conversation_path+"/CL_"+str(self.CL_num) +".pkl", 'wb') as f:
+        with open( os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".pkl" ), 'wb') as f:
             pickle.dump(msg_dict, f)
         f.close()
         time.sleep(1)
-        if self.run_script( "One_v_Groups.py",self.conversation_path+"/CL_"+str(self.CL_num) +".pkl" ):
-            self.html_fname = self.conversation_path+"/CL_"+str(self.CL_num) +".html"
+        if self.run_script( "One_v_Groups.py",os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".pkl" ) ):
+            self.html_fname = os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".html" )
             self.CL_num = self.CL_num+1
         else:
             self.tk_print("[AI] *** Warning *** An error occurred while running the data analysis agents.")
@@ -2306,15 +2301,15 @@ class Boss:
         "Case_criteria_logic":self.Case_criteria_logic,
         "Ctrl_criteria_logic":self.Ctrl_criteria_logic,
         "output_path":self.conversation_path,
-        "output_tsv":self.conversation_path+"/ALL_vs_Groups_"+str(self.CL_num) +".tsv",
-        "output_html":self.conversation_path+"/CL_"+str(self.CL_num) +".html"
+        "output_tsv":os.path.normpath(self.conversation_path+"/ALL_vs_Groups_"+str(self.CL_num) +".tsv" ),
+        "output_html":os.path.normpath( self.conversation_path+"/CL_"+str(self.CL_num) +".html" )
         }
-        with open( self.conversation_path+"/CL_"+str(self.CL_num) +".pkl", 'wb') as f:
+        with open( os.path.normpath( self.conversation_path+"/CL_"+str(self.CL_num) +".pkl" ), 'wb') as f:
             pickle.dump(msg_dict, f)
         f.close()
         time.sleep(1)
-        if self.run_script( "All_v_Groups.py",self.conversation_path+"/CL_"+str(self.CL_num) +".pkl" ):
-            self.html_fname = self.conversation_path+"/CL_"+str(self.CL_num) +".html"
+        if self.run_script( "All_v_Groups.py",os.path.normpath( self.conversation_path+"/CL_"+str(self.CL_num) +".pkl" )):
+            self.html_fname = os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".html")
             self.CL_num = self.CL_num+1
         else:
             self.tk_print("[AI] *** Warning *** An error occurred while running the data analysis agents.")
@@ -2326,16 +2321,16 @@ class Boss:
         "voi_name":self.voi_name,
         "associated_attr":self.associated_attr ,
         "output_path":self.conversation_path,
-        "output_png":self.conversation_path+"/CL_"+str(self.CL_num) +".png",
-        "output_html":self.conversation_path+"/CL_"+str(self.CL_num) +".html"
+        "output_png":os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".png"),
+        "output_html":os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".html")
         }
 
-        with open( self.conversation_path+"/CL_"+str(self.CL_num) +".pkl", 'wb') as f:
+        with open( os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".pkl" ) , 'wb') as f:
             pickle.dump(msg_dict, f)
         f.close()
         time.sleep(1)
-        if self.run_script( "One_v_One_CL.py",self.conversation_path+"/CL_"+str(self.CL_num) +".pkl" ) :
-            self.html_fname = self.conversation_path+"/CL_"+str(self.CL_num) +".html"
+        if self.run_script( "One_v_One_CL.py",os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".pkl" )) :
+            self.html_fname = os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".html")
             self.CL_num = self.CL_num+1
         else:
             self.tk_print("[AI] *** Warning *** An error occurred while running the data analysis agents.")
@@ -2348,17 +2343,16 @@ class Boss:
             "metafname":self.Case_metafname,    
             "Attr_ID":self.voi_name,
             "output_path":self.conversation_path,
-            "output_png":self.conversation_path+"/EXHIBIT_"+str(self.exhibit_num) +".png",
-            "output_html":self.conversation_path+"/EXHIBIT_"+str(self.exhibit_num) +".html",
-            "output_pdf":self.conversation_path+"/EXHIBIT_"+str(self.exhibit_num) +".pdf"
+            "output_png":os.path.normpath(self.conversation_path+"/EXHIBIT_"+str(self.exhibit_num) +".png"),
+            "output_html":os.path.normpath(self.conversation_path+"/EXHIBIT_"+str(self.exhibit_num) +".html")
             }
         
-            with open( self.conversation_path+"/EXHIBIT_"+str(self.exhibit_num) +".pkl", 'wb') as f:
+            with open( os.path.normpath(self.conversation_path+"/EXHIBIT_"+str(self.exhibit_num) +".pkl"), 'wb') as f:
                 pickle.dump(msg_dict, f)
             f.close()
             time.sleep(1)
-            if self.run_script( "EXHIBIT_Agent.py",self.conversation_path+"/EXHIBIT_"+str(self.exhibit_num) +".pkl" ):
-                self.html_fname = self.conversation_path+"/EXHIBIT_"+str(self.exhibit_num) +".html"
+            if self.run_script( "EXHIBIT_Agent.py",os.path.normpath(self.conversation_path+"/EXHIBIT_"+str(self.exhibit_num) +".pkl") ):
+                self.html_fname = os.path.normpath(self.conversation_path+"/EXHIBIT_"+str(self.exhibit_num) +".html")
                 self.exhibit_num = self.exhibit_num+1
             else:
                 
@@ -2374,16 +2368,16 @@ class Boss:
         "Case_ID":self.Case_sample_ids,
         "voi_name":self.voi_name,
         "output_path":self.conversation_path,
-        "output_tsv":self.conversation_path+"/"+self.voi_name+"_vs_ALL_"+str(self.CL_num) +".tsv",
-        "output_html":self.conversation_path+"/CL_"+str(self.CL_num) +".html"
+        "output_tsv":os.path.normpath(self.conversation_path+"/"+self.voi_name+"_vs_ALL_"+str(self.CL_num) +".tsv"),
+        "output_html":os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".html")
         }
 
-        with open( self.conversation_path+"/CL_"+str(self.CL_num) +".pkl", 'wb') as f:
+        with open( os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".pkl"), 'wb') as f:
             pickle.dump(msg_dict, f)
         f.close()
         time.sleep(1)
-        if self.run_script( "All_v_One_CL.py",self.conversation_path+"/CL_"+str(self.CL_num) +".pkl" ) :
-            self.html_fname = self.conversation_path+"/CL_"+str(self.CL_num) +".html"
+        if self.run_script( "All_v_One_CL.py",os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".pkl") ) :
+            self.html_fname = os.path.normpath(self.conversation_path+"/CL_"+str(self.CL_num) +".html")
             self.CL_num = self.CL_num+1
         else:
             self.tk_print("[AI] *** Warning *** An error occurred while running the data analysis agents.")
@@ -2394,7 +2388,7 @@ class Boss:
         "Case_ID":self.Case_sample_ids,
         "associated_attr":self.associated_attr ,
         "output_path":self.conversation_path,
-        "output_html":self.conversation_path+"/Surv_"+str(self.surv_num) +".html"
+        "output_html":os.path.normpath(self.conversation_path+"/Surv_"+str(self.surv_num) +".html")
         }
         
         OS_flag =1 
@@ -2410,8 +2404,8 @@ class Boss:
 
         
         if OS_flag ==1:
-            msg_dict["output_KM_OS_png"]=self.conversation_path+"/Surv_OS_"+str(self.surv_num) +"_KM.png"
-            msg_dict["output_forest_OS_png"]=self.conversation_path+"/Surv_OS_"+str(self.surv_num) +"_forest.png"
+            msg_dict["output_KM_OS_png"]=os.path.normpath(self.conversation_path+"/Surv_OS_"+str(self.surv_num) +"_KM.png")
+            msg_dict["output_forest_OS_png"]=os.path.normpath(self.conversation_path+"/Surv_OS_"+str(self.surv_num) +"_forest.png")
             msg_dict["Case_OS_TIME"] = self.Case_config_dict["OS_TIME"] 
             msg_dict["Case_OS_STATUS"] = self.Case_config_dict["OS_STATUS"] 
 
@@ -2430,18 +2424,18 @@ class Boss:
 
         
         if PFS_flag ==1:
-            msg_dict["output_KM_PFS_png"]=self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +"_KM.png"
-            msg_dict["output_forest_PFS_png"]=self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +"_forest.png"
+            msg_dict["output_KM_PFS_png"]=os.path.normpath(self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +"_KM.png")
+            msg_dict["output_forest_PFS_png"]=os.path.normpath( self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +"_forest.png" )
             msg_dict["Case_PFS_TIME"] = self.Case_config_dict["PFS_TIME"] 
             msg_dict["Case_PFS_STATUS"] = self.Case_config_dict["PFS_STATUS"] 
 
         
-        with open( self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl", 'wb') as f:
+        with open( os.path.normpath(self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl") , 'wb') as f:
             pickle.dump(msg_dict, f)
         f.close()
         time.sleep(1)
         if self.run_script( "one_SURV_lookup.py",self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl" ):
-            self.html_fname = self.conversation_path+"/Surv_"+str(self.surv_num) +".html"
+            self.html_fname = os.path.normpath( self.conversation_path+"/Surv_"+str(self.surv_num) +".html")
             self.surv_num = self.surv_num+1
         else:
             self.tk_print("[AI] *** Warning *** An error occurred while running the data analysis agents.")
@@ -2451,7 +2445,7 @@ class Boss:
         "Case_metafname":self.Case_metafname,    
         "Case_ID":self.Case_sample_ids,
         "output_path":self.conversation_path,
-        "output_html":self.conversation_path+"/Surv_"+str(self.surv_num) +".html"
+        "output_html":os.path.normpath( self.conversation_path+"/Surv_"+str(self.surv_num) +".html" )
         }
         
         OS_flag =1 
@@ -2467,8 +2461,7 @@ class Boss:
 
         
         if OS_flag ==1:
-            msg_dict["output_KM_OS_png"]=self.conversation_path+"/Surv_OS_"+str(self.surv_num) +"_KM.png"
-            # msg_dict["output_forest_OS_png"]=self.conversation_path+"/Surv_OS_"+str(self.surv_num) +"_forest.png"
+            msg_dict["output_KM_OS_png"]=os.path.normpath( self.conversation_path+"/Surv_OS_"+str(self.surv_num) +"_KM.png")
             msg_dict["Case_OS_TIME"] = self.Case_config_dict["OS_TIME"] 
             msg_dict["Case_OS_STATUS"] = self.Case_config_dict["OS_STATUS"] 
 
@@ -2487,18 +2480,17 @@ class Boss:
 
         
         if PFS_flag ==1:
-            msg_dict["output_KM_PFS_png"]=self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +"_KM.png"
-            # msg_dict["output_forest_PFS_png"]=self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +"_forest.png"
+            msg_dict["output_KM_PFS_png"]=os.path.normpath(self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +"_KM.png" )
             msg_dict["Case_PFS_TIME"] = self.Case_config_dict["PFS_TIME"] 
             msg_dict["Case_PFS_STATUS"] = self.Case_config_dict["PFS_STATUS"] 
 
         
-        with open( self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl", 'wb') as f:
+        with open( os.path.normpath( self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl" ) , 'wb') as f:
             pickle.dump(msg_dict, f)
         f.close()
         time.sleep(1)
-        if self.run_script( "one_SURV_lookup.py",self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl" ):
-            self.html_fname = self.conversation_path+"/Surv_"+str(self.surv_num) +".html"
+        if self.run_script( "one_SURV_lookup.py",os.path.normpath(self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl" )):
+            self.html_fname = os.path.normpath(self.conversation_path+"/Surv_"+str(self.surv_num) +".html")
             self.surv_num = self.surv_num+1
         else:
             self.tk_print("[AI] *** Warning *** An error occurred while running the data analysis agents.")
@@ -2509,8 +2501,8 @@ class Boss:
         "Case_metafname":self.Case_metafname,    
         "Case_ID":self.Case_sample_ids,
         "output_path":self.conversation_path,
-        "output_html":self.conversation_path+"/Surv_"+str(self.surv_num) +".html",
-        "output_tsv":self.conversation_path+"/Surv_"+str(self.surv_num) +".tsv"
+        "output_html":os.path.normpath(self.conversation_path+"/Surv_"+str(self.surv_num) +".html"),
+        "output_tsv":os.path.normpath(self.conversation_path+"/Surv_"+str(self.surv_num) +".tsv")
         }
         
         OS_flag =1 
@@ -2526,7 +2518,7 @@ class Boss:
 
         
         if OS_flag ==1:
-            msg_dict["output_OS_png"]=self.conversation_path+"/Surv_OS_"+str(self.surv_num) +".png"
+            msg_dict["output_OS_png"]=os.path.normpath(self.conversation_path+"/Surv_OS_"+str(self.surv_num) +".png")
             msg_dict["Case_OS_TIME"] = self.Case_config_dict["OS_TIME"] 
             msg_dict["Case_OS_STATUS"] = self.Case_config_dict["OS_STATUS"] 
 
@@ -2545,18 +2537,18 @@ class Boss:
 
         
         if PFS_flag ==1:
-            msg_dict["output_PFS_png"]=self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +".png"
+            msg_dict["output_PFS_png"]=os.path.normpath(self.conversation_path+"/Surv_PFS_"+str(self.surv_num) +".png")
             msg_dict["Case_PFS_TIME"] = self.Case_config_dict["PFS_TIME"] 
             msg_dict["Case_PFS_STATUS"] = self.Case_config_dict["PFS_STATUS"] 
 
         
-        with open( self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl", 'wb') as f:
+        with open(os.path.normpath(self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl" ) , 'wb') as f:
             pickle.dump(msg_dict, f)
         f.close()
         time.sleep(1)
 
-        if self.run_script( "All_SURV_lookup.py",self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl" ):
-            self.html_fname = self.conversation_path+"/Surv_"+str(self.surv_num) +".html"
+        if self.run_script( "All_SURV_lookup.py",os.path.normpath(self.conversation_path+"/Surv_"+str(self.surv_num) +".pkl") ):
+            self.html_fname = os.path.normpath(self.conversation_path+"/Surv_"+str(self.surv_num) +".html" )
             self.surv_num = self.surv_num+1
         else:
             self.tk_print("[AI] *** Warning *** An error occurred while running the data analysis agents.")
@@ -2572,7 +2564,7 @@ class Boss:
 
     def start(self,thread, thread_id , conversation_path):
          
-        self.conversation_path = conversation_path 
+        self.conversation_path = os.path.normpath(conversation_path) 
         if not os.path.exists(self.conversation_path):
             os.makedirs(self.conversation_path)
         

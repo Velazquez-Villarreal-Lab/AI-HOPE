@@ -55,6 +55,15 @@ fi
 pyenv global 3.12.3
 hash -r  # refresh shell command cache
 
+# --- Add alias to force python -> python3.12 ---
+if ! grep -q 'alias python=' "$SHELL_CONFIG"; then
+    echo "alias python=\"$HOME/.pyenv/versions/3.12.3/bin/python3.12\"" >> "$SHELL_CONFIG"
+    echo "✅ Added alias to $SHELL_CONFIG: python → python3.12"
+fi
+
+# Source the updated shell config so alias takes effect immediately
+source "$SHELL_CONFIG"
+
 # Confirm Python version
 echo "✅ Python now points to: $(which python)"
 python --version
@@ -81,9 +90,5 @@ fi
 echo "📦 Installing Python packages from requirements.txt..."
 pip install -r requirements.txt
 echo "✅ All packages installed."
-
-# Source shell config to make pyenv changes take effect immediately
-echo "🔁 Sourcing your shell config ($SHELL_CONFIG)..."
-source "$SHELL_CONFIG"
 
 echo "🎉 All set! Python 3.12.3 is now your default Python."

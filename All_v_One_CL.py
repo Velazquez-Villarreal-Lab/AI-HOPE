@@ -132,7 +132,7 @@ class All_v_One_CL:
              
             </center>
             <h3>Numerical Attributes Associated with {self.VOI_name}</h3> 
-            <h4> the following clinical attributes showed meaningful associations with the variable of interest, defined as having a Spearman’s rho greater than 0.3 and a p-value less than 0.05.</h4>
+            <h4> the following clinical attributes showed meaningful associations with the variable of interest, defined as having a Spearman's rho greater than 0.3 and a p-value less than 0.05.</h4>
             <center> 
             <table>
             <tr align= "left" > {sn_str} </tr>  

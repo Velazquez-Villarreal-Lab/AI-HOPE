@@ -83,6 +83,15 @@ fi
 # Apply config
 source "$SHELL_CONFIG"
 
+# Install Python requirements
+if [[ -f requirements.txt ]]; then
+    echo "📦 Installing Python packages from requirements.txt..."
+    pip install -r requirements.txt
+    echo "✅ Python packages installed."
+else
+    echo "⚠️ requirements.txt not found. Skipping package installation."
+fi
+
 # Confirm python version
 echo "🐍 Python version: $(python --version)"
 python -c "import tkinter; print('✅ Tkinter is installed. Version:', tkinter.TkVersion)"
@@ -107,13 +116,5 @@ else
     echo "✅ llama3 model already present."
 fi
 
-# Install Python requirements
-if [[ -f requirements.txt ]]; then
-    echo "📦 Installing Python packages from requirements.txt..."
-    pip install -r requirements.txt
-    echo "✅ Python packages installed."
-else
-    echo "⚠️ requirements.txt not found. Skipping package installation."
-fi
 
 echo "🎉 Setup complete! Python 3.12.3, Tkinter, and llama3 are ready to use."

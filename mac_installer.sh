@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Exit on error
+# Exit immediately on error
 set -e
 
-# Detect shell
+# Detect shell config file
 SHELL_CONFIG=""
 if [[ "$SHELL" == */zsh ]]; then
     SHELL_CONFIG="$HOME/.zshrc"
@@ -14,64 +14,83 @@ else
     exit 1
 fi
 
-echo "🔧 Installing prerequisites..."
+echo "🔧 Starting setup..."
 
-# Install Homebrew if not installed
+# Install Homebrew if needed
 if ! command -v brew &>/dev/null; then
-    echo "🛠 Homebrew not found. Installing..."
+    echo "🛠 Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+else
+    echo "✅ Homebrew already installed."
 fi
 
-# Install pyenv if not installed
-if ! command -v pyenv &>/dev/null; then
-    echo "📦 Installing pyenv..."
-    brew install pyenv
-fi
+# Install Tcl-Tk and pyenv
+echo "📦 Installing tcl-tk and pyenv..."
+brew install tcl-tk pyenv
 
-# Ensure pyenv environment variables are in shell config
+# Add pyenv and Tcl-Tk env config to shell profile
 if ! grep -q 'pyenv init' "$SHELL_CONFIG"; then
-    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> "$SHELL_CONFIG"
-    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> "$SHELL_CONFIG"
-    echo 'eval "$(pyenv init --path)"' >> "$SHELL_CONFIG"
-    echo 'eval "$(pyenv init -)"' >> "$SHELL_CONFIG"
-    echo 'eval "$(pyenv virtualenv-init -)"' >> "$SHELL_CONFIG"
-    echo "✅ pyenv config added to $SHELL_CONFIG"
+    {
+        echo ''
+        echo '# >>> pyenv and Tcl-Tk setup >>>'
+        echo 'export PYENV_ROOT="$HOME/.pyenv"'
+        echo 'export PATH="$PYENV_ROOT/bin:$PATH"'
+        echo 'export PATH="/opt/homebrew/opt/tcl-tk/bin:$PATH"'
+        echo 'export LDFLAGS="-L/opt/homebrew/opt/tcl-tk/lib"'
+        echo 'export CPPFLAGS="-I/opt/homebrew/opt/tcl-tk/include"'
+        echo 'export PKG_CONFIG_PATH="/opt/homebrew/opt/tcl-tk/lib/pkgconfig"'
+        echo 'eval "$(pyenv init --path)"'
+        echo 'eval "$(pyenv init -)"'
+        echo 'eval "$(pyenv virtualenv-init -)"'
+        echo '# <<< pyenv and Tcl-Tk setup <<<'
+    } >> "$SHELL_CONFIG"
+    echo "✅ Environment config added to $SHELL_CONFIG"
 fi
 
-# Load pyenv for current session
+# Load environment for current session
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
+export PATH="/opt/homebrew/opt/tcl-tk/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/tcl-tk/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/tcl-tk/include"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/tcl-tk/lib/pkgconfig"
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
-# Install Python 3.12.3 if not already installed
+# Install Python 3.12.3 with Tkinter support
 if ! pyenv versions | grep -q "3.12.3"; then
-    echo "🐍 Installing Python 3.12.3..."
-    pyenv install 3.12.3
+    echo "🐍 Installing Python 3.12.3 (with Tkinter support)..."
+    env \
+      CPPFLAGS="$CPPFLAGS" \
+      LDFLAGS="$LDFLAGS" \
+      PKG_CONFIG_PATH="$PKG_CONFIG_PATH" \
+      pyenv install 3.12.3
+else
+    echo "✅ Python 3.12.3 already installed."
 fi
 
-# Set Python 3.12.3 globally
+# Set Python 3.12.3 as global
 pyenv global 3.12.3
-hash -r  # refresh shell command cache
+hash -r
 
-# --- Add alias to force python -> python3.12 ---
+# Add alias for python
 if ! grep -q 'alias python=' "$SHELL_CONFIG"; then
     echo "alias python=\"$HOME/.pyenv/versions/3.12.3/bin/python3.12\"" >> "$SHELL_CONFIG"
-    echo "✅ Added alias to $SHELL_CONFIG: python → python3.12"
+    echo "✅ Alias for python added to $SHELL_CONFIG"
 fi
 
-# Source the updated shell config so alias takes effect immediately
+# Apply config
 source "$SHELL_CONFIG"
 
-# Confirm Python version
-echo "✅ Python now points to: $(which python)"
-python --version
+# Confirm python version
+echo "🐍 Python version: $(python --version)"
+python -c "import tkinter; print('✅ Tkinter is installed. Version:', tkinter.TkVersion)"
 
 # Upgrade pip
 pip install --upgrade pip
 
-# Install Ollama if not installed
+# Install Ollama and pull llama3
 if ! command -v ollama &>/dev/null; then
     echo "🤖 Installing Ollama..."
     brew install ollama
@@ -80,15 +99,21 @@ else
     echo "✅ Ollama already installed."
 fi
 
-# Check for requirements.txt
-if [ ! -f requirements.txt ]; then
-    echo "❌ requirements.txt not found in current directory!"
-    exit 1
+if ! ollama list | grep -q '^llama3:'; then
+    echo "📥 Pulling llama3 model..."
+    ollama pull llama3
+    echo "✅ llama3 model pulled."
+else
+    echo "✅ llama3 model already present."
 fi
 
-# Install Python packages
-echo "📦 Installing Python packages from requirements.txt..."
-pip install -r requirements.txt
-echo "✅ All packages installed."
+# Install Python requirements
+if [[ -f requirements.txt ]]; then
+    echo "📦 Installing Python packages from requirements.txt..."
+    pip install -r requirements.txt
+    echo "✅ Python packages installed."
+else
+    echo "⚠️ requirements.txt not found. Skipping package installation."
+fi
 
-echo "🎉 All set! Python 3.12.3 is now your default Python."
+echo "🎉 Setup complete! Python 3.12.3, Tkinter, and llama3 are ready to use."

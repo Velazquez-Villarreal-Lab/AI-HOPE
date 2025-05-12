@@ -78,12 +78,7 @@ class Boss:
         graph.add_node("summary_lookup",  self.summary_Case_fun)
 
         graph.add_node("init_exec_lookup", self.init_exec_fun)
-        graph.add_node("pred_surv_lookup", self.pred_surv_fun)
-        graph.add_node("pred_data_lookup", self.pred_data_fun)
-
-        graph.add_node("chk_surv_lookup", self.__chk_yn_fun)
-        graph.add_node("chk_data_lookup", self.__chk_yn_fun)
-        
+      
         graph.add_node("init_VOI_lookup", self.init_VOI_lookup_fun)
         graph.add_node("parse_VOI_lookup", self.parse_VOI_lookup_fun)
 
@@ -94,6 +89,14 @@ class Boss:
 
         graph.add_node("parse_wRL_lookup", self.__chk_yn_fun)
         graph.add_node("parse_woRL_lookup", self.__chk_yn_fun)
+
+        graph.add_node("chk_All_CL_lookup", self.chk_ALL_fun)
+        
+        
+        graph.add_node("init_all_CL_lookup", self.init_all_CL_fun)
+
+        graph.add_node("predict_all_CL_lookup", self.__chk_yn_fun)
+
 
         graph.add_node("init_CL_lookup", self.init_CL_fun)
         graph.add_node("parse_CL_lookup", self.parse_CL_fun)
@@ -109,9 +112,11 @@ class Boss:
 
         graph.add_node("parse_surv_wRL_lookup", self.__chk_yn_fun)
         graph.add_node("parse_surv_woRL_lookup", self.__chk_yn_fun)
+        graph.add_node("chk_all_surv_CL_lookup", self.chk_ALL_fun)
+        graph.add_node("init_all_surv_CL_lookup", self.init_all_CL_fun)
+        graph.add_node("predict_all_surv_CL_lookup", self.__chk_yn_fun)
 
-
-        graph.add_node("init_surv_CL_lookup", self.init_CL_fun)
+        graph.add_node("init_surv_CL_lookup", self.init_surv_CL_fun)
         graph.add_node("parse_surv_CL_lookup", self.parse_CL_fun)
 
         graph.add_node("all_surv_lookup", self.all_surv_lookup_fun)
@@ -155,12 +160,10 @@ class Boss:
         graph.add_node("finalize_data", self.__chk_yn_fun)
 
         graph.add_node("init_exec", self.init_exec_fun)
-        graph.add_node("pred_surv", self.pred_surv_fun)
-        graph.add_node("pred_data", self.pred_data_fun)
+  
+        graph.add_node("chk_All", self.chk_ALL_fun)
 
-        graph.add_node("chk_surv", self.__chk_yn_fun)
-        graph.add_node("chk_data", self.__chk_yn_fun)
-        
+
         graph.add_node("init_compare", self.init_compare_fun)
         graph.add_node("chk_compare", self.__chk_yn_fun)
 
@@ -275,16 +278,9 @@ class Boss:
         graph.add_conditional_edges(
             "init_exec_lookup",
             self.make_decision_fun,
-            {1:"pred_surv_lookup", 2:"pred_data_lookup"}
+            {1:"init_surv_RL_lookup", 2:"init_VOI_lookup"}
         )
-        graph.add_edge("pred_surv_lookup", "chk_surv_lookup")
-        graph.add_edge("pred_data_lookup", "chk_data_lookup")
-        graph.add_conditional_edges(
-            "chk_surv_lookup",
-            self.make_decision_fun,
-            {1: "init_surv_RL_lookup", 2:"init_VOI_lookup",3:"chk_surv_lookup" }
-        )
-        
+      
         graph.add_conditional_edges(
             "init_surv_RL_lookup",
             self.make_decision_fun,
@@ -293,35 +289,42 @@ class Boss:
 
         graph.add_edge("init_surv_wRL_lookup", "parse_surv_wRL_lookup")
         graph.add_edge("init_surv_woRL_lookup", "parse_surv_woRL_lookup")
+        
         graph.add_conditional_edges(
             "parse_surv_wRL_lookup",
             self.make_decision_fun,
-            { 1:"init_surv_CL_lookup", 2:"simple_surv_lookup",3:"parse_surv_wRL_lookup"}
+            { 1:"chk_all_surv_CL_lookup", 2:"simple_surv_lookup",3:"parse_surv_wRL_lookup"}
         )
 
         graph.add_conditional_edges(
             "parse_surv_woRL_lookup",
             self.make_decision_fun,
-            { 1:"simple_surv_lookup", 2:"init_surv_CL_lookup",3:"parse_surv_woRL_lookup"}
+            { 1:"simple_surv_lookup", 2:"chk_all_surv_CL_lookup",3:"parse_surv_woRL_lookup"}
+        )
+
+        graph.add_conditional_edges(
+            "chk_all_surv_CL_lookup",
+            self.make_decision_fun,
+            { 1:"init_all_surv_CL_lookup", 2:"init_surv_CL_lookup"}
+        )
+
+        graph.add_edge("init_all_surv_CL_lookup", "predict_all_surv_CL_lookup")
+        
+        graph.add_conditional_edges(
+            "predict_all_surv_CL_lookup",
+            self.make_decision_fun,
+            { 1:"all_surv_lookup", 2:"init_surv_CL_lookup",3:"predict_all_surv_CL_lookup"}
         )
 
         graph.add_edge("init_surv_CL_lookup", "parse_surv_CL_lookup")
 
-        graph.add_conditional_edges(
-            "parse_surv_CL_lookup",
-            self.make_decision_fun,
-            { 1:"all_surv_lookup", 2:"one_surv_lookup",3:"parse_surv_CL_lookup"}
-        )
-        
+     
+        graph.add_edge("parse_surv_CL_lookup", "one_surv_lookup")
         graph.add_edge("all_surv_lookup",  "init_end")
         graph.add_edge("one_surv_lookup", "init_end")
         graph.add_edge("simple_surv_lookup", "init_end")
 
-        graph.add_conditional_edges(
-            "chk_data_lookup",
-            self.make_decision_fun,
-            {1: "init_VOI_lookup", 2:"init_surv_RL_lookup",3:"chk_data_lookup" }
-        )
+        
         graph.add_edge("init_VOI_lookup", "parse_VOI_lookup")
         graph.add_conditional_edges(
             "parse_VOI_lookup",
@@ -340,21 +343,35 @@ class Boss:
         graph.add_conditional_edges(
             "parse_wRL_lookup",
             self.make_decision_fun,
-            { 1:"init_CL_lookup", 2:"simple_CL_lookup",3:"parse_wRL_lookup"}
+            { 1:"chk_All_CL_lookup", 2:"simple_CL_lookup",3:"parse_wRL_lookup"}
         )
 
         graph.add_conditional_edges(
             "parse_woRL_lookup",
             self.make_decision_fun,
-            { 1:"simple_CL_lookup", 2:"init_CL_lookup",3:"parse_woRL_lookup"}
+            { 1:"simple_CL_lookup", 2:"chk_All_CL_lookup",3:"parse_woRL_lookup"}
         )
 
-        graph.add_edge("init_CL_lookup", "parse_CL_lookup")
+        
         graph.add_conditional_edges(
-            "parse_CL_lookup",
+            "chk_All_CL_lookup",
             self.make_decision_fun,
-            { 1:"all_CL_lookup", 2:"one_CL_lookup",3:"parse_CL_lookup"}
+            { 1:"init_all_CL_lookup", 2:"init_CL_lookup" }
         )
+
+        graph.add_edge("init_all_CL_lookup", "predict_all_CL_lookup")
+        
+        
+
+        graph.add_conditional_edges(
+            "predict_all_CL_lookup",
+            self.make_decision_fun,
+            { 1:"all_CL_lookup", 2:"init_CL_lookup",3:"predict_all_CL_lookup"}
+        )
+
+
+        graph.add_edge("init_CL_lookup", "parse_CL_lookup")
+        graph.add_edge("parse_CL_lookup", "one_CL_lookup")
         
         graph.add_edge("all_CL_lookup", "init_end")
         graph.add_edge("one_CL_lookup", "init_end")
@@ -438,38 +455,25 @@ class Boss:
         graph.add_conditional_edges(
             "init_exec",
             self.make_decision_fun,
-            {1:"pred_surv", 2:"pred_data"}
-        )
-
-        graph.add_edge("pred_surv", "chk_surv")
-        graph.add_edge("pred_data", "chk_data")
-        
-        graph.add_conditional_edges(
-            "chk_surv",
-            self.make_decision_fun,
-            {1: "init_Survival", 2:"init_compare", 3:"chk_surv" }
+            {1:"init_Survival", 2:"chk_All"}
         )
 
         graph.add_conditional_edges(
-            "chk_data",
+            "chk_All",
             self.make_decision_fun,
-            { 1:"init_compare", 2:"init_Survival",3:"chk_data"}
+            { 1:"all_CL", 2:"init_compare" }
         )
+
         graph.add_edge("init_compare", "chk_compare")
 
         graph.add_conditional_edges(
             "chk_compare",
             self.make_decision_fun,
-            { 1:"init_OR", 2:"init_CL",3:"chk_compare"}
+            { 1:"init_CL", 2:"init_OR" ,3:"chk_compare"}
         )
 
         graph.add_edge("init_CL", "parse_CL")
-
-        graph.add_conditional_edges(
-            "parse_CL",
-            self.make_decision_fun,
-            { 1:"all_CL", 2:"chk_CL",3:"parse_CL"}
-        )
+        graph.add_edge("parse_CL", "chk_CL")
 
         graph.add_conditional_edges(
             "chk_CL",
@@ -503,7 +507,7 @@ class Boss:
 
         self.graph = graph.compile(
             checkpointer=local_memory,
-            interrupt_before=["init_Qtypechk_1", "pred_twoGroups", "pred_lookup",  "switch_twoGroups","switch_lookup", "input_data_lookup" , "decide_subset_lookup","show_attr_values_lookup", "summary_data_lookup",   "parse_query_I_lookup" , "set_criteria_lookup", "chk_surv_lookup" , "chk_data_lookup", "parse_VOI_lookup", "parse_wRL_lookup", "parse_woRL_lookup",  "parse_surv_wRL_lookup", "parse_surv_woRL_lookup", "parse_CL_lookup", "parse_surv_CL_lookup", "input_data_Case" ,"show_attr_values_Case", "summary_data_Case",  "parse_query_I_Case" , "set_criteria_Case", "input_data_Ctrl" , "summary_data_Ctrl", "parse_query_I_Ctrl" , "show_attr_values_Ctrl","set_criteria_Ctrl","finalize_data", "chk_surv" , "chk_data" , "chk_compare",  "parse_Survival", "multiple_Survival" , "parse_OR", "parse_CL", "parse_end"]
+            interrupt_before=["init_Qtypechk_1", "pred_twoGroups", "pred_lookup",  "switch_twoGroups","switch_lookup", "input_data_lookup" , "decide_subset_lookup","show_attr_values_lookup", "summary_data_lookup",   "parse_query_I_lookup" , "set_criteria_lookup",  "parse_VOI_lookup", "parse_wRL_lookup", "parse_woRL_lookup",  "parse_surv_wRL_lookup", "parse_surv_woRL_lookup", "parse_CL_lookup", "predict_all_CL_lookup", "parse_surv_CL_lookup", "predict_all_surv_CL_lookup", "input_data_Case" ,"show_attr_values_Case", "summary_data_Case",  "parse_query_I_Case" , "set_criteria_Case", "input_data_Ctrl" , "summary_data_Ctrl", "parse_query_I_Ctrl" , "show_attr_values_Ctrl","set_criteria_Ctrl","finalize_data" , "chk_compare",  "parse_Survival", "multiple_Survival" , "parse_OR", "parse_CL", "parse_end"]
         )
         
         self.conversation_path = ""
@@ -1030,13 +1034,13 @@ class Boss:
                 elif output == "2":
                     self.tk_print("[AI] you say No.\n" )
                 else:
-                    self.tk_print("[AI] I don't get it. Let's do it again.\n")
+                    self.tk_print("[AI] I don't get it. Please input your answer again.\n")
                 # messages = "Yes"
 
         return {'messages': [output]}
 
         print(messages)
-        pass
+        
 
     def make_decision_fun(self, state: AgentState):
         messages = state['messages'][-1].content
@@ -1130,7 +1134,7 @@ class Boss:
         self.tk_print(str)
         str = loaded_dict["message"]
         self.tk_print(str) 
-        str=f"[AI] You can check the attribute names in your data table. Your data table is located at {self.Case_metafname}.\n"
+        str=f"[AI] You can check the attribute names (column names) in your data table. Your data table is located at {self.Case_metafname}.\n"
         self.tk_print(str)
 
     def parse_VOI_lookup_fun(self, state: AgentState):
@@ -1236,12 +1240,16 @@ class Boss:
         f.close()
         self.tk_print(file_content)
 
+        str ="\n=======================================================\n"+ "Confirm Selected Data" +"\n=======================================================\n"
+        self.tk_print(str)
+        
+        self.tk_print(f"[AI] You selected {self.Case_data_id}.\n")
+
         str=f"[AI] Your data table is located at {metadata_fname}.\n"
         self.tk_print(str)
         str=f"[AI] There are {rows} samples and {columns} attributes in your dataset.\n"
         self.tk_print(str)
-        str ="\n=======================================================\n"+ "Confirm Selected Data" +"\n=======================================================\n"
-        self.tk_print(str)
+        
         str=f"\nIs this the correct dataset you'd like to use for your analysis?\nPlease reply YES or NO."
         self.tk_print(str)
         
@@ -1257,7 +1265,7 @@ class Boss:
         str = loaded_dict["message"]
         self.tk_print(str)
         
-        pass
+        
 
     def set_criteria_Case_fun(self, state: AgentState):
         sample_dict = {}
@@ -1452,7 +1460,7 @@ class Boss:
         self.data_repository = df['Name'].to_list()
         str="\n[AI] What is the dataset you want to use for the control samples? Please input the name of the dataset.\n"
         self.tk_print(str)
-        pass
+        
    
     def init_query_I_Case_fun(self, state: AgentState):
 
@@ -1461,7 +1469,7 @@ class Boss:
         f.close()
         str ="\n=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
         self.tk_print(str)
-        
+        self.tk_print("[AI] Let's refine your case group!\n")
         if len(self.Case_criteria_logic) ==0:
             str ="[AI] You have not defined any criteria to filter samples in the selected dataset for the case cohort.\n"
             self.tk_print(str)
@@ -1484,7 +1492,7 @@ class Boss:
         f.close()
         str ="\n=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
         self.tk_print(str)
-
+        self.tk_print("[AI] Let's refine your control group!\n")
         if len(self.Ctrl_criteria_logic) ==0:
             str ="[AI] You have not defined any criteria to filter samples in the selected dataset for the case cohort.\n"
             self.tk_print(str)
@@ -1829,10 +1837,10 @@ class Boss:
                 self.tk_print("\n[AI]***WARNING*** Your input is invalid. Please try again.\n")
             else :
                 if output == "1":
-                    self.tk_print("[AI] this is a surv control study.\n" )
+                    self.tk_print("[AI] Setting up a survival analysis.\n" )
 
                 else:
-                    self.tk_print("[AI] this is not a surv control study.\n")
+                    self.tk_print("[AI] Continue with general clinical data analyses.\n")
                 # messages = "Yes"
 
         
@@ -1989,6 +1997,7 @@ class Boss:
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
         self.tk_print(str)
+        self.tk_print(f"[AI] Your initial input is {self.main_Q}.")
         str = loaded_dict["message"]
         self.tk_print(str)    
 
@@ -2000,7 +2009,7 @@ class Boss:
         self.tk_print(str)
         str = loaded_dict["message"]
         self.tk_print(str)  
-        pass
+        
       
     
     def init_multiple_Survival_fun(self, state: AgentState):
@@ -2118,7 +2127,6 @@ class Boss:
     
     def pred_surv_fun(self, state: AgentState):
 
-
         with open(os.path.normpath( 'dialogs/_pred_surv.pkl' ), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
@@ -2144,6 +2152,9 @@ class Boss:
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
         self.tk_print(str)
+        
+        self.tk_print(f"Your initial input is : {self.main_Q}\n")
+
         str = loaded_dict["message"]
         self.tk_print(str)  
 
@@ -2192,12 +2203,25 @@ class Boss:
         return {'messages': [output]}
 
     def init_CL_fun(self, state: AgentState):
-        with open(os.path.normpath('dialogs/_init_CL.pkl' ), 'rb') as f:
+        with open(os.path.normpath('dialogs/_init_CL_case_control.pkl' ), 'rb') as f:
             loaded_dict = pickle.load(f)
         f.close()
         str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
         self.tk_print(str)
         str = loaded_dict["message"]
+        self.tk_print(str)
+        str=f"[AI] You can check the attribute names (column names) in your data table. Your data table is located at {self.Case_metafname}.\n"
+        self.tk_print(str)  
+    
+    def init_surv_CL_fun(self, state: AgentState):
+        with open(os.path.normpath('dialogs/_init_surv_CL.pkl' ), 'rb') as f:
+            loaded_dict = pickle.load(f)
+        f.close()
+        str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
+        self.tk_print(str)
+        str = loaded_dict["message"]
+        self.tk_print(str)
+        str=f"[AI] You can check the attribute names (column names) in your data table. Your data table is located at {self.Case_metafname}.\n"
         self.tk_print(str)  
     
     def init_end_fun(self, state: AgentState):
@@ -2213,18 +2237,16 @@ class Boss:
         self.tk_print("\n[AI] Would you like to perform another analysis? Please reply yes to continue")
       
   
-    
-    def parse_CL_fun(self, state: AgentState):
-        messages = state['messages'][-1].content
-        
+    def chk_ALL_fun(self, state: AgentState): 
         with open(os.path.normpath("dialogs/_all.pkl"), "rb") as f:
             loaded_chat_prompt = pickle.load(f)
 
         chain = loaded_chat_prompt| self.model  
         input_dict = {
-            "user_input":messages
+            "user_input":self.main_Q
         
         }
+
         output = chain.invoke(
             input_dict
         )
@@ -2233,7 +2255,7 @@ class Boss:
         matches = re.findall(r'\[(.*?)\]', output)
         
         data_id_list = []
-        output = "3"
+        output = "2"
         
         for match in matches: 
                 data_id_list =  match.split(',')
@@ -2248,21 +2270,39 @@ class Boss:
     
             if len(matches) > 1 or len(data_id_list)>1 :
                 self.tk_print("\n[AI]***WARNING*** Your input is invalid. Please try again.\n")
-            else :
-                if output == "2":
-                    self.tk_print("\n[AI] You want to one variable.\n" )
-                    attribute_id  = self.find_best_match( messages, self.Case_metadata_df.columns)
-                    self.associated_attr = attribute_id
-                    self.tk_print(f"[AI] {self.associated_attr} is used here.\n")
 
 
-            return {'messages': [output]}  
+            return {'messages': [output]} 
+
+    def init_all_CL_fun(self, state: AgentState): 
+
+        with open(os.path.normpath('dialogs/_chk_all.pkl' ), 'rb') as f:
+            loaded_dict = pickle.load(f)
+        f.close()
+        
+        str ="=======================================================\n"+ loaded_dict["title"] +"\n=======================================================\n"
+        self.tk_print(str)
+        
+        self.tk_print(f"\nYour initial input query is : {self.main_Q}\n")
+
+        str = loaded_dict["message"]
+        self.tk_print(str)  
+    
+        
+
+
+    def parse_CL_fun(self, state: AgentState):
+        messages = state['messages'][-1].content
+        attribute_id  = self.find_best_match( messages, self.Case_metadata_df.columns)
+        self.associated_attr = attribute_id
+        self.tk_print(f"[AI] {self.associated_attr} is used here.\n")
+                
     def chk_CL_fun(self, state: AgentState):
         output = "2"
         if self.associated_attr in self.Ctrl_metadata_df.columns :
             output = "1"    
         else:
-            self.tk_print(f"[AI]***WARNING*** {self.associated_attr} is not defined in the control samples.\n")
+            self.tk_print(f"[AI]***WARNING*** The attribute {self.associated_attr} is not defined in both the case and control samples.\n")
         return {'messages': [output]}  
     def one_CL_fun(self, state: AgentState):
         
@@ -2602,15 +2642,17 @@ class Boss:
             node_str =  "init_set_criteria_lookup"
         if snapshot.next[0]=="show_attr_values_lookup" :
             node_str = "overview_lookup"
-        if snapshot.next[0]=="chk_surv_lookup" :
-            node_str =  "pred_surv_lookup"
-        if snapshot.next[0]=="chk_data_lookup" :
-            node_str =  "pred_data_lookup"
         
         if snapshot.next[0]=="parse_VOI_lookup" :
             node_str =  "init_VOI_lookup"
         if snapshot.next[0]=="parse_CL_lookup" :
             node_str =  "init_CL_lookup"
+
+        
+        if snapshot.next[0]=="predict_all_CL_lookup" :
+            node_str =  "init_all_CL_lookup"
+
+
         if snapshot.next[0]=="parse_surv_CL_lookup" :
             node_str =  "init_surv_CL_lookup"
         if snapshot.next[0]=="parse_wRL_lookup" :
@@ -2621,6 +2663,8 @@ class Boss:
             node_str =  "init_surv_wRL_lookup"
         if snapshot.next[0]=="parse_surv_woRL_lookup" :
             node_str =  "init_surv_woRL_lookup"
+        if snapshot.next[0]=="predict_all_surv_CL_lookup" :
+            node_str =  "init_all_surv_CL_lookup"
         
 
         if snapshot.next[0]=="input_data_Case" :
@@ -2648,10 +2692,6 @@ class Boss:
         if snapshot.next[0]=="finalize_data" :
             node_str =  "summary_Ctrl"
             
-        if snapshot.next[0]=="chk_surv" :
-            node_str =  "pred_surv"
-        if snapshot.next[0]=="chk_data" :
-            node_str =  "pred_data"
 
         if snapshot.next[0]=="parse_OR" :
             node_str = "init_OR"
@@ -2694,45 +2734,45 @@ def main():
 
     abot = Boss( llm, memory_p1  )
     
-    abot.start(thread_p1, "1" , "conversation/test/")
+    # abot.start(thread_p1, "1" , "conversation/test/")
         
-    while True :
-        conversation_content =abot.pop_messages()
-        print(conversation_content)
-            # conversation_content = self.user_input.get()
-            # self.output_text.config(state=tk.NORMAL)
-            # self.output_text.insert(tk.END, conversation_content+"\n")
-            # self.output_text.config(state=tk.DISABLED)
-            # self.output_text.see(tk.END)
+    # while True :
+    #     conversation_content =abot.pop_messages()
+    #     print(conversation_content)
+    #         # conversation_content = self.user_input.get()
+    #         # self.output_text.config(state=tk.NORMAL)
+    #         # self.output_text.insert(tk.END, conversation_content+"\n")
+    #         # self.output_text.config(state=tk.DISABLED)
+    #         # self.output_text.see(tk.END)
             
-            # self.display_html(abot.html_fname)
-            # print(abot.html_fname)
-            # self.user_input.set('')   
-            # self.root.wait_variable(self.user_input)
+    #         # self.display_html(abot.html_fname)
+    #         # print(abot.html_fname)
+    #         # self.user_input.set('')   
+    #         # self.root.wait_variable(self.user_input)
 
-        input_str = input()
+    #     input_str = input()
             
-        if input_str.lower() in ["quit", "exit", "q"]:
-            break
-        if ( not abot.proceed(thread_p1, "1",input_str) ) :
-            break
-        # self.root.quit() 
-        # self.root.destroy() 
-    print("Goodbye!")
+    #     if input_str.lower() in ["quit", "exit", "q"]:
+    #         break
+    #     if ( not abot.proceed(thread_p1, "1",input_str) ) :
+    #         break
+    #     # self.root.quit() 
+    #     # self.root.destroy() 
+    # print("Goodbye!")
         # print("All the statistical reports are generated at " + self.conversation_path  + ".")
      
 
-    # from langchain_core.runnables.graph import CurveStyle, MermaidDrawMethod, NodeStyles
-    # from PIL import Image
-    # from io import BytesIO
+    from langchain_core.runnables.graph import CurveStyle, MermaidDrawMethod, NodeStyles
+    from PIL import Image
+    from io import BytesIO
 
     
-    # image_stream = BytesIO(abot.graph.get_graph().draw_png())
+    image_stream = BytesIO(abot.graph.get_graph().draw_png())
 
-    # # Open the image using PIL
-    # image = Image.open(image_stream)
+    # Open the image using PIL
+    image = Image.open(image_stream)
 
-    # image.save("saved_image.png")
+    image.save("saved_image.png")
 
 if __name__=="__main__":
     
